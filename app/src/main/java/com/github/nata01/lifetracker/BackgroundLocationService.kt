@@ -1,27 +1,26 @@
 package com.github.nata01.lifetracker
 
-import android.app.IntentService
+import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.location.LocationManager
-import kotlinx.android.synthetic.main.activity_main.*
-import java.lang.IllegalStateException
-import java.util.*
+import android.os.IBinder
 
-class BackgroundLocationService : IntentService(BackgroundLocationService::class.java.simpleName) {
 
-    override fun onHandleIntent(intent: Intent?) {
+class BackgroundLocationService : Service() {
+    override fun onBind(p0: Intent?): IBinder? {
+        return null;
+    }
+
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         val locationService = LocationService(getSystemService(Context.LOCATION_SERVICE) as LocationManager)
         val requestService = RequestService()
 
-//        Timer().scheduleAtFixedRate(object : TimerTask() {
-//            override fun run() {
-                locationService.getLocation {
-                    val userLocationDto = UserLocationDto(it.latitude.toString(), it.longitude.toString())
-                    requestService.makeRequest(userLocationDto) { res ->
-                    }
-                }
-//            }
-//        }, 0, 5000)
+        locationService.getLocation {
+            val userLocationDto = UserLocationDto(it.latitude.toString(), it.longitude.toString())
+            requestService.makeRequest(userLocationDto) { res ->
+            }
+        }
+        return START_STICKY
     }
 }

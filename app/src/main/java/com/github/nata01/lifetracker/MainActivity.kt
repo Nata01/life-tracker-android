@@ -1,12 +1,12 @@
 package com.github.nata01.lifetracker
 
+import android.app.AlarmManager
+import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.location.LocationManager
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import kotlinx.android.synthetic.main.activity_main.*
-import java.util.*
+import android.support.v7.app.AppCompatActivity
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -14,13 +14,12 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        val serviceIntent = Intent(applicationContext, BackgroundLocationService::class.java)
+        val restartServicePI = PendingIntent.getService(
+            applicationContext, 1, serviceIntent, 0
+        )
 
-
-
-
-        location_btn.setOnClickListener {
-            val serviceIntent = Intent(applicationContext, BackgroundLocationService::class.java)
-            startService(serviceIntent)
-        }
+        val am = applicationContext.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        am.setRepeating(AlarmManager.RTC, System.currentTimeMillis(), 60000, restartServicePI)
     }
 }
